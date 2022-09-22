@@ -7,8 +7,63 @@ import { CANVAS_WIDTH } from "./CONST.js";
 const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d")
 
- canvas.width = CANVAS_WIDTH;
- canvas.height = CANVAS_HEIGHT;
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
+
+class Player {
+	constructor() {
+		this.x = 200
+		this.y = canvas.height / 2 - 16
+		this.width = 20
+		this.height = 32
+		this.speed = 5
+		this.weight = 1
+		this.vy = 0
+		this.pb = this.y + this.height
+		this.registerEventHandlers();
+	}
+
+	/**
+	 * @param {boolean} toggle
+	 */
+	registerEventHandlers(toggle) {
+		window.addEventListener("keypress", (ev) => {
+			switch (ev.key) {
+                case "w":
+					this.flap();
+                    break;
+				case " ":
+					this.flap();
+					break;
+			}
+		});
+
+		window.addEventListener("click", (e) => {
+			this.flap();
+		});
+	}
+
+	flap() {
+		this.vy = 0
+		this.vy -= 8
+	}
+	 
+	update() {
+		this.vy += 0.3
+		this.y += this.vy * this.weight
+		this.y = Math.min(this.y, canvas.height - this.height)
+
+
+	}
+	
+
+	render() {
+		ctx.save()
+		ctx.fillStyle = `hsla(0, 100%, 50%, 1)`
+		ctx.fillRect(this.x, this.y, this.width, this.height)
+		ctx.restore()
+	}
+}
 
 
 
@@ -16,14 +71,16 @@ export const ctx = canvas.getContext("2d")
 
 
 let manager = new ObstacleManager();
+let player = new Player();
 manager.init();
 
 function animate() {
-	// clear the screen
-	ctx?.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	manager.update();
 	manager.draw();
+	player.update();
+	player.render();
 
 	requestAnimationFrame(animate);
 }

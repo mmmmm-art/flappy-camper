@@ -18,31 +18,16 @@ body {
 	height: 100%;
 	border: solid 5px rgb(179, 5, 5);
 	background-color: rgb(0, 0, 0);
-	animation: intro 3s;
+	animation: intro 1s;
 }
 
-
-@keyframes SPACE {
-	from{ letter-spacing: 0px;}
-	to{letter-spacing: 50px;}
-	from{color: red}
-	to{color: darkblue}
-}
 
 @keyframes intro {
-	/*from{width: 0%;}
+	from{width: 0%;}
 	to{width: 100%;}
 	from{height: 0%;}
 	to{height:100%;}
 	from{rotate: 180deg}
-	to{rotate: 360deg;}*/
-}
-
-
-h1 {
-  font-size: xx-large;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  animation: SPACE 3s infinite alternate-reverse ease-in-out;
-
+	to{rotate: 360deg;}
 }
 

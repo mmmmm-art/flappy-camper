@@ -7,7 +7,7 @@ import { CANVAS_WIDTH } from "../CONST.js";
 import { ctx } from "../app.js";
 const MAX_TOP_OBSTACLE_HEIGHT = 225;
 const MIN_TOP_OBSTACLE_HEIGHT = 50;
-const MAX_BOTTOM_OBSTACLE_HEIGHT = 350;
+let MAX_BOTTOM_OBSTACLE_HEIGHT = 50;
 const MIN_BOTTOM_OBSTACLE_HEIGHT = 50;
 export let gameSpeed = 3
 export class ObstacleManager {
@@ -49,7 +49,7 @@ export class ObstacleManager {
 			o.w = BOTTOM_OBSTACLE_WIDTH_MIN;
 			o.x = currentX;
 			this.bottoms.push(o);
-			currentX += o.w;
+			currentX += o.w - 1;
 		}
 	}
 
@@ -58,9 +58,14 @@ export class ObstacleManager {
 			b.update();
 		});
         this.color += 1
-        if (gameSpeed < 15) {
-            gameSpeed += 0.001
+        if (gameSpeed < 20) {
+            gameSpeed += 0.003
         }
+
+        if (MAX_BOTTOM_OBSTACLE_HEIGHT < 375) {
+            MAX_BOTTOM_OBSTACLE_HEIGHT += 0.7999999
+        }
+        console.log(MAX_BOTTOM_OBSTACLE_HEIGHT)
     
         if (this.color2 <= 100) 
         {
@@ -80,7 +85,6 @@ export class ObstacleManager {
         {
             this.color2 += 1
         }
-        console.log(this.color2)
 		this.topObstacles = this.topObstacles.filter((o) => o.isVisible);
 
 		while (this.topObstacles.length < this.minTopObs) {
@@ -114,11 +118,10 @@ export class ObstacleManager {
 		let lastBottom = this.bottoms[this.bottoms.length - 1];
 		if (lastBottom.x <= CANVAS_WIDTH) {
 			let h =
-				Math.random() * (MAX_BOTTOM_OBSTACLE_HEIGHT - MIN_BOTTOM_OBSTACLE_HEIGHT) +
-				MIN_BOTTOM_OBSTACLE_HEIGHT;
+				Math.random() * (MAX_BOTTOM_OBSTACLE_HEIGHT - MIN_BOTTOM_OBSTACLE_HEIGHT) +MIN_BOTTOM_OBSTACLE_HEIGHT;
 
 			let o = new Earth(h,this.color2);
-			o.x = lastBottom.x + lastBottom.w;
+			o.x = lastBottom.x + lastBottom.w - 1;3
 			this.bottoms.push(o);
 		}
 	}
