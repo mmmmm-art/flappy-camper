@@ -65,7 +65,6 @@ export class ObstacleManager {
         if (MAX_BOTTOM_OBSTACLE_HEIGHT < 375) {
             MAX_BOTTOM_OBSTACLE_HEIGHT += 0.7999999
         }
-        console.log(MAX_BOTTOM_OBSTACLE_HEIGHT)
     
         if (this.color2 <= 100) 
         {
