@@ -4,7 +4,7 @@ import { Earth } from "./Earth.js";
 import { BOTTOM_OBSTACLE_WIDTH_MIN } from "./Earth.js";
 import { TOP_OBSTACLE_WIDTH } from "./Arora.js";
 import { CANVAS_WIDTH } from "../CONST.js";
-import { ctx } from "../app.js";
+
 const MAX_TOP_OBSTACLE_HEIGHT = 225;
 const MIN_TOP_OBSTACLE_HEIGHT = 50;
 let MAX_BOTTOM_OBSTACLE_HEIGHT = 50;

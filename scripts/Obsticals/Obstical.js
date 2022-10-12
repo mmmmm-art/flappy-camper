@@ -15,9 +15,8 @@ export class Obstacle {
 
 		this.x = x;
 		this.y = y;
-
+		this.image = document.getElementById("Dirt")
 		this.isVisible = true;
-
 		this.color = color;
     
 	}
@@ -28,7 +27,8 @@ export class Obstacle {
 	}
 
 	draw() {
-		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 1)`;
-		ctx.fillRect(this.x, this.y, this.w, this.h);
+		ctx.save();
+		ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+		ctx.restore();
 	}
 }

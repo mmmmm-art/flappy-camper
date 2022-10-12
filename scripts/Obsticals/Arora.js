@@ -40,4 +40,11 @@ export class Arora extends Obstacle {
             this.heightThing += Math.random() * 10
         }
     }
+
+    draw() {
+        ctx.save();
+        ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 1)`;
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.restore();
+    }
 }

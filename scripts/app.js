@@ -6,28 +6,63 @@ import { CANVAS_WIDTH } from "./CONST.js";
 /** @type {HTMLCanvasElement} */
 //@ts-ignore
 const canvas = document.getElementById("game-canvas");
-export const ctx = canvas.getContext("2d")
+export const ctx = canvas.getContext("2d");
+//1900 -150
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
 class Player {
-	constructor() {
-		this.x = 500
-		this.y = canvas.height / 2 - 16
-		this.width = 20
-		this.height = 32
-		this.health = 1000
-		this.healthX = 200
-		this.weight = 1.2
-		this.vy = 0
+	/**
+	 * @param {ObstacleManager} ObstacleManager
+	 */
+	constructor(ObstacleManager) {
+		this.scale = 3;
+		this.x = 500;
+		this.o = ObstacleManager;
+		this.y = canvas.height / 2 - 16;
+		this.width = (1900 / 12) / this.scale;
+		this.height = 150 / this.scale;
+		this.health = 1000;
+		this.healthX = 200;
+		this.weight = 1.2;
+		this.vy = 0;
 		this.pb = this.y + this.height;
 		this.fillColor = 0;
-        this.strokeColor = 200;
-        this.score = 0;
+		this.strokeColor = 200;
+		this.score = 0;
 		this.scoreX = 0;
 		this.scoreY = 95;
 		this.dust = [];
+		this.image = {
+			/** @type {HTMLImageElement}*/ //@ts-ignore
+			src: document.getElementById("Player"),
+			fps: 12,
+		
+			frames: [
+				{ x: 0 },
+				{ x: 1900 / 12 },
+				{ x: (1900 / 12) * 2 },
+				{ x: (1900 / 12) * 3 },
+				{ x: (1900 / 12) * 4 },
+				{ x: (1900 / 12) * 5 },
+				{ x: (1900 / 12) * 6 },
+				{ x: (1900 / 12) * 7 },
+				{ x: (1900 / 12) * 8 },
+				{ x: (1900 / 12) * 9 },
+				{ x: (1900 / 12) * 10 },
+				{ x: (1900 / 12) * 11 },
+				{ x: 1900 },
+			],
+			currentFrame: 0,
+			nextframe: function () {
+				this.currentFrame++;
+				if (this.currentFrame >= this.frames.length-1) {
+					this.currentFrame = 0;
+				}
+			},
+		};
+		this.thing = 0
 		this.registerEventHandlers();
 	}
 
@@ -37,9 +72,9 @@ class Player {
 	registerEventHandlers(toggle) {
 		window.addEventListener("keypress", (ev) => {
 			switch (ev.key) {
-                case "w":
+				case "w":
 					this.flap(false, true, false);
-                    break;
+					break;
 				case "q":
 					this.flap(true, false, false);
 					break;
@@ -49,6 +84,31 @@ class Player {
 				case " ":
 					this.flap(false, true, false);
 					break;
+				case "5":
+					this.scale = 0.5;
+					this.width = (1900 / 12) / this.scale;
+					this.height = 150 / this.scale;
+					break
+				case "4":
+					this.scale = 1;
+					this.width = (1900 / 12) / this.scale;
+					this.height = 150 / this.scale;
+					break
+				case "3":
+					this.scale = 2;
+					this.width = (1900 / 12) / this.scale;
+					this.height = 150 / this.scale;
+					break
+				case "2":
+					this.scale = 3;
+					this.width = (1900 / 12) / this.scale;
+					this.height = 150 / this.scale;
+					break
+				case "1":
+					this.scale = 4;
+					this.width = (1900 / 12) / this.scale;
+					this.height = 150 / this.scale;
+					break
 			}
 		});
 	}
@@ -59,62 +119,86 @@ class Player {
 	 * @param {boolean} big
 	 */
 	flap(lit, mid, big) {
-		if(lit) {
-		this.vy = 0
-		this.vy -= 3
-		// this.healthX += 10
-		// this.health -= 20
-		lit = false
+		if (lit) {
+			this.vy = 0;
+			this.vy -= 3;
+			// this.healthX += 10
+			// this.health -= 20
+			lit = false;
 		}
 
-		if(mid) {
-		this.vy = 0
-		this.vy -= 6
-		// this.healthX += 25
-		// this.health -= 50
-		mid = false
+		if (mid) {
+			this.vy = 0;
+			this.vy -= 6;
+			// this.healthX += 25
+			// this.health -= 50
+			mid = false;
 		}
 
-		if(big) {
-		this.vy = 0
-		this.vy -= 12
-		// this.healthX += 50
-		// this.health -= 100
-		big = false
+		if (big) {
+			this.vy = 0;
+			this.vy -= 12;
+			// this.healthX += 50
+			// this.health -= 100
+			big = false;
 		}
 	}
 
 	GameOver() {
-		gameSpeed = 0
-		this.x += 1/0
+		gameSpeed = 0;
+		this.x += 1 / 0;
 	}
-	 
+
 	update() {
+		this.thing += 0.01666666666667
 		if (this.health <= 0) {
-			this.GameOver()
+			this.GameOver();
 		}
-        this.strokeColor += 0.1;
-		this.score += Math.floor(gameSpeed/3)
-		this.vy += 0.3
-		this.y += this.vy * this.weight
-		this.y = Math.min(this.y, canvas.height - this.height)
+		this.strokeColor += 0.1;
+		this.score += Math.floor(gameSpeed / 3);
+		this.vy += 0.3;
+		this.y += this.vy * this.weight;
+		this.y = Math.min(this.y, canvas.height - this.height);
 
 		this.dust.push(new dust(this));
 		this.dust.forEach((d) => {
 			d.update();
-		})
+		});
 		this.dust.filter((d) => {
-			d.isVis
-		})
+			d.isVis;
+		});
 
+		if(this.thing >= 1/this.image.fps) {
+			this.image.nextframe();
+			this.thing =0
+		}
+		this.o.bottoms.forEach((b) => {
+			if (this.x + this.width >= b.x && this.x <= b.x + b.w && this.y + this.height >= b.y) {
+				this.GameOver()
+			}
+		})
+		this.o.topObstacles.forEach((b) => {
+			if (this.x + this.width >= b.x && this.x <= b.x + b.w && this.y <= b.y + b.h) {
+				this.GameOver()
+			}
+		})
+		
 	}
-	
 
 	render() {
-		ctx.save()
-		ctx.fillStyle = `hsla(0, 100%, 50%, 1)`
-		ctx.fillRect(this.x, this.y, this.width, this.height)
-		ctx.restore()
+		ctx.save();
+		ctx.drawImage(
+			this.image.src,
+			this.image.frames[this.image.currentFrame].x,
+			0,
+			1900 / 12,
+			150,
+			this.x,
+			this.y,
+			this.width,
+			this.height
+		);
+		ctx.restore();
 
 		ctx.save();
 		ctx.fillStyle = `hsla(${this.fillColor}, 100%, 100%, 1)`;
@@ -136,7 +220,7 @@ class Player {
 
 		this.dust.forEach((d) => {
 			d.render();
-		})
+		});
 	}
 }
 
@@ -149,32 +233,31 @@ class particals {
 	constructor(x, y, r) {
 		this.x = x;
 		this.y = y;
-		this.radius = r
-		this.color = 0
-		this.deltaY = Math.random() * 5 + 0.2 * (Math.random() > 0.5 ? -1 : 1)
-		this.deltaR = Math.random() + 1
+		this.radius = r;
+		this.color = 0;
+		this.deltaY = Math.random() * 5 + 0.2 * (Math.random() > 0.5 ? -1 : 1);
+		this.deltaR = Math.random() + 1;
 		this.opacity = 1;
-		this.isVis = true
+		this.isVis = true;
 	}
 
 	update() {
-		this.x -= gameSpeed
-		this.y -= this.deltaY
-		this.color += 5
-		this.radius += this.deltaR
-		this.opacity -= 0.01
+		this.x -= gameSpeed;
+		this.y -= this.deltaY;
+		this.color += 5;
+		this.radius += this.deltaR;
+		this.opacity -= 0.01;
 		this.isVis = this.opacity > 0 || this.x + this.radius > 0;
 	}
 
 	render() {
 		ctx.save();
-		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, ${this.opacity})`
+		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, ${this.opacity})`;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
 		ctx.fill();
 		ctx.restore();
 	}
-
 }
 
 class dust extends particals {
@@ -182,13 +265,37 @@ class dust extends particals {
 	 * @param {Player} p
 	 */
 	constructor(p) {
-		super(p.x, p.y + p.height / 2, 2,)
+		super(p.x + p.width / 2, p.y + p.height, 2);
+	}
+}
+
+class collectable {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+		this.w = 10;
+		this.h = 20;
+		this.isVis = true;
 	}
 
+	draw() {
+		ctx.save();
+		ctx.fillStyle = `hsla(100, 100, 100, 1)`
+		ctx.fillRect(this.x, this.y, this.w, this.h)
+		ctx.restore();
+	}
+}
+
+class collectMan {
+	constructor() {
+		this.collects = [];
+		this.max = 5;
+		
+	}
 }
 
 let manager = new ObstacleManager();
-let player = new Player();
+let player = new Player(manager);
 manager.init();
 
 function animate() {
