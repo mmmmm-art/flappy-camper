@@ -1,7 +1,7 @@
+//@ts-check
 import { gameSpeed, ObstacleManager } from "./Obsticals/Obstical-man.js";
 import { CANVAS_HEIGHT } from "./CONST.js";
 import { CANVAS_WIDTH } from "./CONST.js";
-//@ts-check
 
 /** @type {HTMLCanvasElement} */
 //@ts-ignore
@@ -122,24 +122,24 @@ class Player {
 		if (lit) {
 			this.vy = 0;
 			this.vy -= 3;
-			// this.healthX += 10
-			// this.health -= 20
+			this.healthX += 10
+			this.health -= 20
 			lit = false;
 		}
 
 		if (mid) {
 			this.vy = 0;
 			this.vy -= 6;
-			// this.healthX += 25
-			// this.health -= 50
+			this.healthX += 25
+			this.health -= 50
 			mid = false;
 		}
 
 		if (big) {
 			this.vy = 0;
 			this.vy -= 12;
-			// this.healthX += 50
-			// this.health -= 100
+			this.healthX += 50
+			this.health -= 100
 			big = false;
 		}
 	}
@@ -150,6 +150,11 @@ class Player {
 	}
 
 	update() {
+		console.log(this.health,this.healthX)
+		if(this.health > 1000 && this.health < 200) {
+			this.healthX = 200
+			this.health = 1000
+		}
 		this.thing += 0.01666666666667
 		if (this.health <= 0) {
 			this.GameOver();
@@ -270,33 +275,84 @@ class dust extends particals {
 }
 
 class collectable {
-	constructor(x, y) {
+	/**
+	 * @param {number} x
+	 */
+	constructor(x) {
 		this.x = x;
-		this.y = y;
-		this.w = 10;
-		this.h = 20;
+		this.y = Math.random() * 100 + 375;
+		this.w = 20;
+		this.h = 40;
 		this.isVis = true;
+	}
+
+	update() {
+		this.x -= gameSpeed
+		if(this.x + this.w <= 0) {
+			this.isVis = false
+		}
 	}
 
 	draw() {
 		ctx.save();
-		ctx.fillStyle = `hsla(100, 100, 100, 1)`
+		ctx.fillStyle = `hsla(100, 100%, 50%, 1)`
 		ctx.fillRect(this.x, this.y, this.w, this.h)
 		ctx.restore();
 	}
 }
 
 class collectMan {
-	constructor() {
+	/**
+	 * @param {Player} Player
+	 */
+	constructor(Player) {
+		this.player = Player;
 		this.collects = [];
 		this.max = 5;
+	}
+
+	init() {
+		let p1 = new collectable(600);
+		let p2 = new collectable(800);
+		let p3 = new collectable(1000);
+		let p4 = new collectable(1200);
+		let p5 = new collectable(1400);
+		let p6 = new collectable(1500);
+		let p7 = new collectable(1600);
+		this.collects.push(p1, p2, p3, p4, p5, p6, p7);
+	}
+
+	update() {
+		this.collects.forEach((c) => {
+			c.update();
+			c.draw();
+		});
+		this.collects = this.collects.filter((i) => i.isVis)
+
+		if(this.collects.length < 5) {
+			let c = new collectable(canvas.width + (Math.random() * 100));
+			this.collects.push(c)
+		}
+
+
+		this.collects.forEach((b) => {
+			if (this.player.x + this.player.width >= b.x && this.player.x <= b.x + b.w && this.player.y + this.player.height >= b.y) {
+				this.player.healthX -= 25
+				this.player.health += 50
+				b.isVis = false;
+			}
+		})
+
+
 		
 	}
 }
 
 let manager = new ObstacleManager();
 let player = new Player(manager);
+let cman = new collectMan(player);
 manager.init();
+cman.init();
 
 function animate() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -305,6 +361,7 @@ function animate() {
 	manager.draw();
 	player.update();
 	player.render();
+	cman.update();
 
 	requestAnimationFrame(animate);
 }
